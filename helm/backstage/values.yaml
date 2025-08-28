@@ -4,7 +4,7 @@
 # Image configuration
 image:
   repository: ghcr.io/pdaxh/backstage-ulp
-  tag: "latest"
+  tag: "dev"
   pullPolicy: IfNotPresent
 
 # Service configuration
