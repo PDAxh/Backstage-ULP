@@ -20,6 +20,70 @@ This project consists of:
 - Helm 3.x
 - kubectl configured
 
+### 🚀 **Complete Deployment Commands**
+
+#### **1. Initial Setup (One-time)**
+```bash
+# Clone the repository
+git clone https://github.com/PDAxh/backstage-ulp.git
+cd backstage-ULP
+
+# Build the Backstage application
+cd backstage
+yarn install --immutable
+yarn build:backend
+cd ..
+
+# Build Docker image
+docker build -f backstage/packages/backend/Dockerfile -t ghcr.io/pdaxh/backstage-ulp:dev ./backstage
+
+# Push to registry
+docker push ghcr.io/pdaxh/backstage-ulp:dev
+```
+
+#### **2. Deploy with Helm (Local)**
+```bash
+# Create namespace and deploy
+kubectl create namespace backstage
+helm upgrade --install backstage ./helm/backstage -n backstage --create-namespace
+
+# Check deployment status
+kubectl get pods -n backstage
+helm status backstage -n backstage
+```
+
+#### **3. Deploy with ArgoCD**
+```bash
+# Apply ArgoCD application
+kubectl apply -f argocd/application-backstage.yaml
+
+# Check ArgoCD sync status
+kubectl get applications -n argocd
+argocd app sync backstage
+```
+
+#### **4. Testing & Verification**
+```bash
+# Test Backstage locally
+kubectl port-forward svc/backstage -n backstage 7007:80
+# Access at: http://localhost:7007
+
+# Check logs
+kubectl logs -f deployment/backstage -n backstage
+```
+
+#### **5. Update & Redeploy**
+```bash
+# When you make changes to Backstage
+cd backstage
+yarn build:backend
+cd ..
+docker build -f backstage/packages/backend/Dockerfile -t ghcr.io/pdaxh/backstage-ulp:dev ./backstage
+docker push ghcr.io/pdaxh/backstage-ulp:dev
+
+# ArgoCD will automatically detect and deploy changes
+```
+
 ### Local Development
 
 1. **Navigate to the Backstage app:**
@@ -264,6 +328,23 @@ argocd app get backstage
 - [Helm Documentation](https://helm.sh/docs)
 - [ArgoCD Documentation](https://argo-cd.readthedocs.io)
 - [Kubernetes Documentation](https://kubernetes.io/docs)
+
+## 🚀 **Quick Reference - Essential Commands**
+
+```bash
+# 1. Deploy ArgoCD first (from argocd-ULP repo)
+helm upgrade --install argocd-ulp ./argocd-ULP --namespace argocd --create-namespace --wait
+
+# 2. Deploy Backstage via ArgoCD
+kubectl apply -f backstage-ULP/argocd/application-backstage.yaml
+
+# 3. Check status
+kubectl get pods -n backstage
+kubectl get applications -n argocd
+
+# 4. Access Backstage
+kubectl port-forward svc/backstage -n backstage 7007:80
+```
 
 ## 🤝 Contributing
 

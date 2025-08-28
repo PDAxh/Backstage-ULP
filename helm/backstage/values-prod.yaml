@@ -3,7 +3,7 @@
 
 # Use production image tag
 image:
-  repository: ghcr.io/danielaxhammar/backstage-ulp
+  repository: ghcr.io/pdaxh/backstage-ulp
   tag: "latest"
   pullPolicy: Always
 

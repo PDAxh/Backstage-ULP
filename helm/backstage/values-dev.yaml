@@ -3,7 +3,7 @@
 
 # Use development image tag
 image:
-  repository: ghcr.io/danielaxhammar/backstage-ulp
+  repository: ghcr.io/pdaxh/backstage-ulp
   tag: "dev"
 
 # Enable ingress for development

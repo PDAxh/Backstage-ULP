@@ -3,7 +3,7 @@
 
 # Image configuration
 image:
-  repository: ghcr.io/danielaxhammar/backstage-ulp
+  repository: ghcr.io/pdaxh/backstage-ulp
   tag: "latest"
   pullPolicy: IfNotPresent
 

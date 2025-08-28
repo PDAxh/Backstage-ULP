@@ -8,7 +8,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/PDAxh/Backstage-ULP
+    repoURL: https://github.com/PDAxh/backstage-ulp
     targetRevision: main
     path: helm/backstage
     helm:
