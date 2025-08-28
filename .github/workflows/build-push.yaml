@@ -1,0 +1,44 @@
+name: build-push-backstage
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "app/**"
+      - ".github/workflows/build-push.yaml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build image
+        run: |
+          docker build -f app/packages/backend/Dockerfile -t ghcr.io/${{ github.repository_owner }}/backstage:${{ github.sha }} ./app
+
+      - name: Push image
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/backstage:${{ github.sha }}
+
+      - name: Update Helm values (image tag)  # simplest: dev overlay
+        run: |
+          sed -i 's|^  tag:.*|  tag: "'${{ github.sha }}'"|g' helm/backstage/values-dev.yaml
+
+      - name: Commit & push values change
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@users.noreply.github.com"
+          git add helm/backstage/values-dev.yaml
+          git commit -m "chore: bump backstage image to ${{ github.sha }}"
+          git push
